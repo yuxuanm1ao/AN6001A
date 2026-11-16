@@ -1,11 +1,30 @@
 #web app
-from flask import Flask, render_template,Request
+from flask import Flask, render_template,request
+import joblib
+
+model=joblib.load("dbs.pkl")
 
 app=Flask(__name__)
 
-@app.route("/")
+@app.route("/",methods=["GET","POST"])
 def index():
-    return("web app")
+    return(render_template("index.html"))
+
+@app.route("/main",methods=["GET","POST"])
+def main():
+    q=request.form.get("q")
+    return(render_template("main.html"))
+
+@app.route("/dbs",methods=["GET","POST"])
+def dbs():
+    q=request.form.get("q")
+    return(render_template("dbs.html"))
+
+@app.route("/dbsresult",methods=["GET","POST"])
+def dbsresult():
+    q=float(request.form.get("q"))
+    r=model.predict([[q]])
+    return(render_template("dbsresult.html",r=r[0][0]))
 
 if __name__=="__main__":
     app.run()
